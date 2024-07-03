@@ -136,12 +136,12 @@ class CustomCodeInterpreterSchema(BaseModel):
     )
     dependencies_used_in_code: List[str] = Field(
         ...,
-        description="Mandatory list of libraries used in the code with proper installing names. (will be installed using pip)",
+        description="Mandatory list of all libraries used in the code with proper installing names. (will be installed using pip)",
     )
 
 class CustomCodeInterpreterTool(BaseTool):
     name: str = "Code Interpreter"
-    description: str = "Interprets Python3 code strings with a final print statement."
+    description: str = "Interprets Python3 code strings. Use final print statement to read the output."
     args_schema: Type[BaseModel] = CustomCodeInterpreterSchema
     code: Optional[str] = None
     workspace_dir: Optional[str] = None
