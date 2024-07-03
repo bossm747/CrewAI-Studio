@@ -131,6 +131,15 @@ class PageCrewRun:
             ss.result = None
             st.success("Crew stopped successfully.")
             st.rerun()
+        
+        if st.button('Train crew!', disabled=ss.running):
+            crew = selected_crew.get_crewai_crew(full_output=True)
+            inputs = {key.split('_')[1]: value for key, value in ss.placeholders.items()}
+            try:
+                crew.train(n_iterations=3,inputs=inputs)
+                st.success("Crew trained successfully.")
+            except Exception as e:
+                st.error(f"Error training crew: {str(e)}")
 
     def display_result(self):
         if ss.result is not None:
