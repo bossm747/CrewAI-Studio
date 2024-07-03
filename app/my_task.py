@@ -6,13 +6,14 @@ from db_utils import save_task, delete_task
 from datetime import datetime
 
 class MyTask:
-    def __init__(self, id=None, description=None, expected_output=None, agent=None, async_execution = None, created_at=None, context_from_async_tasks_ids=None):
+    def __init__(self, id=None, description=None, expected_output=None, agent=None, async_execution = None, created_at=None, context_from_async_tasks_ids=None, human_input=None):
         self.id = id or "T_" + rnd_id()
         self.description = description or "Identify the next big trend in AI. Focus on identifying pros and cons and the overall narrative."
         self.expected_output = expected_output or "A comprehensive 3 paragraphs long report on the latest AI trends."
         self.agent = agent or ss.agents[0] if ss.agents else None
         self.async_execution = async_execution or False
         self.context_from_async_tasks_ids = context_from_async_tasks_ids or None
+        self.human_input = human_input if human_input else False
         self.created_at = created_at or datetime.now().isoformat()
         self.edit_key = f'edit_{self.id}'
         if self.edit_key not in ss:
@@ -62,6 +63,7 @@ class MyTask:
                     self.expected_output = st.text_area("Expected output", value=self.expected_output)
                     self.agent = st.selectbox("Agent", options=ss.agents, format_func=lambda x: x.role, index=0 if self.agent is None else agent_options.index(self.agent.role))
                     self.async_execution = st.checkbox("Async execution", value=self.async_execution)
+                    self.human_input = st.checkbox("Human input", value=self.human_input)
                     self.context_from_async_tasks_ids = st.multiselect("Context from async tasks", options=[task.id for task in ss.tasks if task.async_execution],default=self.context_from_async_tasks_ids,format_func=lambda x : [task.description[:120] for task in ss.tasks if task.id == x][0])
                     submitted = st.form_submit_button("Save")
                     if submitted:
@@ -73,6 +75,7 @@ class MyTask:
                 st.markdown(f"**Expected output:** {self.expected_output}")
                 st.markdown(f"**Agent:** {self.agent.role if self.agent else 'None'}")
                 st.markdown(f"**Async execution:** {self.async_execution}")
+                st.markdown(f"**Human input:** {self.human_input}")
                 st.markdown(f"**Context from async tasks:** {', '.join([task.description[:120] for task in ss.tasks if task.id in self.context_from_async_tasks_ids]) if self.context_from_async_tasks_ids else 'None'}")
                 col1, col2 = st.columns(2)
                 with col1:
